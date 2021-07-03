@@ -5,7 +5,7 @@
 
 int main() {
 
-    #ifdef _DEBUG
+    #ifdef DEBUG
 
     test_addition();
     test_multiplication_entier();
@@ -13,7 +13,9 @@ int main() {
     test_transposition();
     test_affichage();
 
-    #endif // _DEBUG
+    std::cout << "Tests effectues !\n";
+
+    #endif // DEBUG
 
     std::cin.get();
 

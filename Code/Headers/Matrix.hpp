@@ -19,8 +19,8 @@ class Matrix {
     std::size_t NumberLines() const noexcept;
     std::size_t NumberColumns() const noexcept;
 
-    std::vector<int> GetLine(std::size_t) const noexcept;
-    std::vector<int> GetColumn(std::size_t) const noexcept;
+    std::vector<int> GetLine(std::size_t) const;
+    std::vector<int> GetColumn(std::size_t) const;
 
     void AddLine(const std::vector<int>&);
     void AddColumn(const std::vector<int>&);
@@ -55,7 +55,8 @@ class Matrix {
 
     private:
 
-    std::vector<std::vector<int>> m_content;
+    std::size_t m_lines, m_columns;
+    std::vector<int> m_content;
 
 };
 

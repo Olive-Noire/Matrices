@@ -2,27 +2,30 @@
 
 #include <stdexcept>
 #include <iostream>
-#include <cassert>
 #include <numeric>
 
-Matrix::Matrix(std::size_t x, std::size_t y, int n) noexcept : m_content(x, std::vector(y, n)) {}
+Matrix::Matrix(std::size_t x, std::size_t y, int n) noexcept : m_lines{x}, m_columns{y}, m_content(x*y, n) {}
 
-std::size_t Matrix::NumberLines() const noexcept { return m_content.size(); }
-std::size_t Matrix::NumberColumns() const noexcept { return m_content[0].size(); }
+std::size_t Matrix::NumberLines() const noexcept { return m_lines; }
+std::size_t Matrix::NumberColumns() const noexcept { return m_columns; }
 
-std::vector<int> Matrix::GetLine(std::size_t index) const noexcept {
+std::vector<int> Matrix::GetLine(std::size_t index) const {
     
-    if (index >= NumberLines()) throw std::runtime_error{"Error : index of line too much big"};
-    return m_content[index];
+    if (index >= m_lines) throw std::runtime_error{"Error : index of line too much big"};
+
+    std::vector<int> result;
+
+    for (std::size_t i{0}; i < m_columns; i++) result.push_back(m_content[index*m_columns+i]);
+    return result;
     
 }
 
-std::vector<int> Matrix::GetColumn(std::size_t index) const noexcept {
+std::vector<int> Matrix::GetColumn(std::size_t index) const {
 
     if (index >= NumberColumns()) throw std::runtime_error{"Error : index of column too much big"};
 
     std::vector<int> column;
-    for (const std::vector<int> &v : m_content) column.push_back(v[index]);
+    for (std::size_t i{0}; i < m_lines; i++) column.push_back((*this)(i, index));
 
     return column;
 
@@ -31,28 +34,36 @@ std::vector<int> Matrix::GetColumn(std::size_t index) const noexcept {
 void Matrix::AddLine(const std::vector<int> &line) {
 
     if (line.size() != NumberColumns()) throw std::runtime_error{"Error : Size of added line does not equals number of columns"};
-    m_content.push_back(line);
+
+    for (int i : line) m_content.push_back(i);
+    m_lines++;
 
 }
 
 void Matrix::AddColumn(const std::vector<int> &column) {
 
     if (column.size() != NumberLines()) throw std::runtime_error{"Error : Size of added column does not equals number of lines"};
-    for (std::size_t i{0}; i < NumberLines(); i++) m_content[i].push_back(column[i]);
+
+    for (std::size_t i{0}; i < NumberLines(); i++) m_content.insert(m_content.cbegin()+i*m_lines+m_columns, column[i]);
+    m_columns++;
 
 }
 
 void Matrix::RemoveLine() {
 
     if (NumberLines() == 0) throw std::runtime_error{"Error : Can't remove, beacause matrix is empty"};
-    m_content.pop_back();
+
+    for (std::size_t i{0}; i < m_columns; i++) m_content.pop_back();
+    m_lines--;
 
 }
 
 void Matrix::RemoveColumn() {
 
     if (NumberColumns() == 0) throw std::runtime_error{"Error : Can't remove, beacause matrix is empty"};
-    for (std::vector<int> &v : m_content) v.pop_back();
+
+    for (std::size_t i{0}; i < m_lines; i++) m_content.erase(m_content.cbegin()+i*m_columns-1);
+    m_columns--;
 
 }
 
@@ -108,7 +119,8 @@ Matrix operator*(const Matrix &l, const Matrix &r) {
 
         for (std::size_t y{0}; y < r.NumberColumns(); y++) {
 
-            result(x, y) = std::inner_product(l.GetLine(x).cbegin(), l.GetLine(x).cend(), r.Transpose().GetColumn(y).cbegin(), 0);
+            std::vector<int> line{l.GetLine(x)};
+            result(x, y) = std::inner_product(line.cbegin(), line.cend(), r.GetColumn(y).cbegin(), 0);
 
         }
 
@@ -178,13 +190,13 @@ std::ostream& operator<<(std::ostream &flux, const Matrix &m) {
 const int& Matrix::operator()(std::size_t x, std::size_t y) const {
     
     if (x > NumberLines() || y > NumberColumns()) throw std::runtime_error{"Error : index is too much big"};
-    return m_content[x][y];
+    return m_content[x*m_columns+y];
 
 }
 
 int& Matrix::operator()(std::size_t x, std::size_t y) {
     
     if (x > NumberLines() || y > NumberColumns()) throw std::runtime_error{"Error : index is too much big"};
-    return m_content[x][y];
+    return m_content[x*m_columns+y];
     
 }

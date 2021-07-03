@@ -1,4 +1,4 @@
-#ifdef _DEBUG
+#ifdef DEBUG
 
 #ifndef DEF_TESTS_HPP
 #define DEF_TESTS_HPP
@@ -11,4 +11,4 @@ void test_affichage();
 
 #endif // DEF_TESTS_HPP
 
-#endif // _DEBUG
+#endif // DEBUG

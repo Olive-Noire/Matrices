@@ -1,4 +1,4 @@
-#ifdef _DEBUG
+#ifdef DEBUG
 
 #include "../Headers/Tests.hpp"
 
@@ -177,4 +177,4 @@ void test_affichage() {
 
 }
 
-#endif // _DEBUG
+#endif // DEBUG
