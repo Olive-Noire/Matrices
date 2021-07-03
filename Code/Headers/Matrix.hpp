@@ -31,14 +31,19 @@ class Matrix {
     Matrix Transpose() const noexcept;
 
     friend Matrix operator+(const Matrix&, const Matrix&);
+    friend Matrix operator-(const Matrix&, const Matrix&);
 
     friend Matrix operator*(const Matrix&, const Matrix&);
     friend Matrix operator*(const Matrix&, int) noexcept;
 
     Matrix& operator+=(const Matrix&);
+    Matrix& operator-=(const Matrix&);
 
     Matrix& operator*=(const Matrix&);
     Matrix& operator*=(int) noexcept;
+
+    friend bool operator==(const Matrix&, const Matrix&) noexcept;
+    friend bool operator!=(const Matrix&, const Matrix&) noexcept;
 
     friend std::ostream& operator<<(std::ostream&, const Matrix&);
 

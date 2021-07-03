@@ -84,6 +84,21 @@ Matrix operator+(const Matrix &l, const Matrix &r) {
 
 }
 
+Matrix operator-(const Matrix &l, const Matrix &r) {
+
+    if (l.NumberLines() != r.NumberLines() || l.NumberColumns() != r.NumberColumns()) throw std::runtime_error{"Error : Matrixs dimensions does not equals"};
+
+    Matrix t{l};
+    for (std::size_t x{0}; x < t.NumberLines(); x++) {
+
+        for (std::size_t y{0}; y < t.NumberColumns(); y++) t(x, y) -= r(x, y);
+
+    }
+
+    return t;
+
+}
+
 Matrix operator*(const Matrix &l, const Matrix &r) {
 
     if (l.NumberColumns() != r.NumberLines()) throw std::runtime_error{"Error : Matrixs dimensions does not equals"};
@@ -123,6 +138,13 @@ Matrix& Matrix::operator+=(const Matrix &m) {
 
 }
 
+Matrix& Matrix::operator-=(const Matrix &m) {
+
+    *this = *this-m;
+    return *this;
+
+}
+
 Matrix& Matrix::operator*=(const Matrix &m) {
 
     *this = *this*m;
@@ -136,6 +158,9 @@ Matrix& Matrix::operator*=(int n) noexcept {
     return *this;
 
 }
+
+bool operator==(const Matrix &l, const Matrix &r) noexcept { return l.m_content == r.m_content; }
+bool operator!=(const Matrix &l, const Matrix &r) noexcept { return !(l==r); }
 
 std::ostream& operator<<(std::ostream &flux, const Matrix &m) {
 

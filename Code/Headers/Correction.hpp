@@ -1,4 +1,4 @@
-#include "./Matrice.hpp"
+#include "./Matrix.hpp"
 
 #ifndef DEF_MATRIX_HPP
 #define DEF_MATRIX_HPP
