@@ -1,7 +1,7 @@
 #include "../Headers/Correction.hpp"
 
-#ifndef DEF_MATRICE_HPP
-#define DEF_MATRICE_HPP
+#ifndef DEF_MATRIX_HPP
+#define DEF_MATRIX_HPP
 
 #include <algorithm>
 #include <cassert>
