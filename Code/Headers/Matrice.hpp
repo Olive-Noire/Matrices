@@ -8,6 +8,7 @@ class Matrice {
 
     public:
 
+    Matrice() = default;
     Matrice(const Matrice&) = default;
     Matrice(Matrice&&) noexcept = default;
 
@@ -20,27 +21,27 @@ class Matrice {
 
     Matrice Transpose() const noexcept;
 
-    friend Matrice operator+(const Matrice&, const Matrice&) noexcept;
+    friend Matrice operator+(const Matrice&, const Matrice&);
 
     friend Matrice operator*(const Matrice&, const Matrice&) noexcept;
     friend Matrice operator*(const Matrice&, int) noexcept;
 
-    Matrice& operator+=(const Matrice&) noexcept;
+    Matrice& operator+=(const Matrice&);
 
     Matrice& operator*=(const Matrice&) noexcept;
     Matrice& operator*=(int) noexcept;
 
     friend std::ostream& operator<<(std::ostream&, const Matrice&);
 
-    int& operator()(std::size_t, std::size_t) const;
-    int& operator()(std::size_t, std::size_t);
+    const int& operator()(std::size_t, std::size_t) const noexcept;
+    int& operator()(std::size_t, std::size_t) noexcept;
 
     Matrice& operator=(const Matrice&) = default;
     Matrice& operator=(Matrice&&) noexcept = default;
 
     private:
 
-    std::vector<int> m_content;
+    std::vector<std::vector<int>> m_content{};
 
 };
 
