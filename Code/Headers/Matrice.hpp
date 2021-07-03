@@ -23,12 +23,12 @@ class Matrice {
 
     friend Matrice operator+(const Matrice&, const Matrice&);
 
-    friend Matrice operator*(const Matrice&, const Matrice&) noexcept;
+    friend Matrice operator*(const Matrice&, const Matrice&);
     friend Matrice operator*(const Matrice&, int) noexcept;
 
     Matrice& operator+=(const Matrice&);
 
-    Matrice& operator*=(const Matrice&) noexcept;
+    Matrice& operator*=(const Matrice&);
     Matrice& operator*=(int) noexcept;
 
     friend std::ostream& operator<<(std::ostream&, const Matrice&);
@@ -44,5 +44,7 @@ class Matrice {
     std::vector<std::vector<int>> m_content{};
 
 };
+
+int ScalarCalcul(const std::vector<int>&, const std::vector<int>&);
 
 #endif // DEF_MATRICE_HPP

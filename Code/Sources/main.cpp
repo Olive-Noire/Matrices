@@ -177,7 +177,7 @@ int main() {
 
     test_addition();
     test_multiplication_entier();
-    //test_multiplication_matrice();
+    test_multiplication_matrice();
     test_transposition();
     test_affichage();
 
