@@ -121,6 +121,10 @@ void test_multiplication_matrice() {
 
     }
 
+    assert(m1*m2*resultat == m1*(m2*resultat) && "Propriété associatif non respecté");
+    //assert(m1*(m2+resultat) == m1*m2+m1*resultat && "Propriété de distributivité non respecté");
+    //assert(m1*m2 != m2*m1 && "Propriété non commutatif non respecté");
+
 }
 
 void test_transposition() {
