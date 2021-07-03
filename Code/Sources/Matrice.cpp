@@ -9,7 +9,14 @@ std::size_t Matrice::Columns() const noexcept { return m_content[0].size(); }
 
 Matrice Matrice::Transpose() const noexcept {
 
-    return Matrice{};
+    Matrice t{Columns(), Lines()};
+    for (std::size_t l{0}; l < Lines(); l++) {
+        
+        for(std::size_t i{0}; i < Columns(); i++) t(i, l) = this->operator()(l, i);
+
+    }
+
+    return t;
 
 }
 
