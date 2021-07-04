@@ -12,6 +12,7 @@ class Matrix {
     Matrix(const Matrix&) = default;
     Matrix(Matrix&&) noexcept = default;
 
+    Matrix(const std::vector<std::vector<int>>&);
     Matrix(std::size_t, std::size_t, int = 0) noexcept;
     Matrix(std::size_t, std::size_t, const std::vector<int>&);
     Matrix(std::size_t, std::size_t, const std::vector<std::vector<int>>&);
@@ -37,6 +38,8 @@ class Matrix {
     bool Empty() const noexcept;
     void Clear() noexcept;
     void Reverse();
+
+    const std::vector<int>& Linear() const noexcept;
 
     Matrix operator!() const;
 
@@ -71,5 +74,7 @@ class Matrix {
     std::vector<int> m_content;
 
 };
+
+int ScalarProduct(const std::vector<int>&, const std::vector<int>&);
 
 #endif // DEF_MATRIX_HPP

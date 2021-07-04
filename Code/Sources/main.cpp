@@ -20,8 +20,6 @@ int main() {
 
     #endif // DEBUG
 
-    std::cin.get();
-
     return 0;
 
 }

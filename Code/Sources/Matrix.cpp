@@ -7,22 +7,41 @@
 
 #include "../Headers/MatrixTypes.hpp"
 
+Matrix::Matrix(const std::vector<std::vector<int>> &c) : m_lines{c.size()}, m_columns{0}, m_content{} {
+
+    for (const std::vector<int> &v : c) if (v.size() > m_columns) m_columns = v.size();
+    *this = Matrix{m_lines, m_columns, c};
+
+}
+
 Matrix::Matrix(std::size_t x, std::size_t y, int n) noexcept : m_lines{x}, m_columns{y}, m_content(x*y, n) {}
 
-Matrix::Matrix(std::size_t x, std::size_t y, const std::vector<int> &c) : m_lines{x}, m_columns{y}, m_content{} {
+Matrix::Matrix(std::size_t x, std::size_t y, const std::vector<int> &c) : m_lines{x}, m_columns{y}, m_content{c} {
 
-    if (c.size() != x*y) throw std::runtime_error{"Error : Vector size is different of dimensions (horizontal)"};
+    if (c.size() != x*y) {
+
+        while (m_content.size() < x*y) m_content.push_back(0);
+        while (m_content.size() > x*y) m_content.pop_back();
+
+    }
 
 }
 
 Matrix::Matrix(std::size_t x, std::size_t y, const std::vector<std::vector<int>> &c) : m_lines{x}, m_columns{y}, m_content{} {
 
-    if (c.size() != x) throw std::runtime_error{"Error : Vector size is different of dimensions (horizontal)"};
+    for (std::vector<int> v : c) {
+        
+        while (v.size() < y) v.push_back(0);
+        while (v.size() > y) v.pop_back();
 
-    for (std::size_t i{0}; i < x; i++) {
+        m_content.insert(m_content.cend(), v.begin(), v.end());
 
-        if (c[i].size() != y) throw std::runtime_error{"Error : Vector size is different of dimensions (vertical)"};
-        for (std::size_t j{0}; j < y; j++) m_content.push_back(c[i][j]);
+    }
+
+    if (c.size() != x) {
+
+        while (m_content.size()/y < x) for (std::size_t i{0}; i < m_columns; i++) m_content.push_back(int{});
+        while (m_content.size()/y > x) for (std::size_t i{0}; i < m_columns; i++) m_content.pop_back();
 
     }
 
@@ -113,6 +132,8 @@ Matrix Matrix::Transpose() const noexcept {
 bool Matrix::Empty() const noexcept { return m_content.empty(); }
 void Matrix::Clear() noexcept { m_content.clear(); }
 void Matrix::Reverse() { std::reverse(m_content.begin(), m_content.end()); }
+
+const std::vector<int>& Matrix::Linear() const noexcept { return m_content; }
 
 Matrix Matrix::operator!() const {
 
@@ -267,5 +288,18 @@ Matrix pow(Matrix m, std::size_t p) {
     for (std::size_t i{1}; i < p; i++) m *= t;
 
     return m;
+
+}
+
+int ScalarProduct(const std::vector<int> &l, const std::vector<int> &r) {
+
+    if (line.size() == column.size()) {
+
+        int result{0};
+        for (std::size_t i{0}; i < line.size(); i++) result += line[i]*column[i];
+
+        return result;
+
+    } else throw std::runtime_error{"Error : vector-line and vector-column sizes does not equals"};
 
 }
