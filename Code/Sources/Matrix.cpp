@@ -5,9 +5,28 @@
 #include <iostream>
 #include <numeric>
 
-#include "../Headers/MatrixType.hpp"
+#include "../Headers/MatrixTypes.hpp"
 
 Matrix::Matrix(std::size_t x, std::size_t y, int n) noexcept : m_lines{x}, m_columns{y}, m_content(x*y, n) {}
+
+Matrix::Matrix(std::size_t x, std::size_t y, const std::vector<int> &c) : m_lines{x}, m_columns{y}, m_content{c} {
+
+    if (c.size() != x*y) throw std::runtime_error{"Error : Vector size is different of dimensions"};
+
+}
+
+Matrix::Matrix(std::size_t x, std::size_t y, const std::vector<std::vector<int>> &c) : m_lines{x}, m_columns{y} {
+
+    if (c.size() != x) throw std::runtime_error{"Error : Vector size is different of dimensions (horizontal)"};
+
+    for (std::size_t i{0}; i < x; i++) {
+
+        if (c[i].size() != y) throw std::runtime_error{"Error : Vector size is different of dimensions (vertical)"};
+        for (std::size_t j{0}; j < y; j++) m_content.push_back(c[i][j]);
+
+    }
+
+}
 
 std::size_t Matrix::NumberLines() const noexcept { return m_lines; }
 std::size_t Matrix::NumberColumns() const noexcept { return m_columns; }
@@ -34,47 +53,47 @@ std::vector<int> Matrix::GetColumn(std::size_t index) const {
 
 }
 
-void Matrix::AddLines(std::vector<int> line, std::size_t s) {
+void Matrix::AddLines(std::vector<int> line, std::size_t l) {
 
     if (line == std::vector<int>{}) line = std::vector<int>(m_columns, 0);
     if (line.size() != m_columns && !Empty()) throw std::runtime_error{"Error : Size of added line does not equals number of columns"};
 
-    for (std::size_t i{0}; i < s; i++) for (int l : line) m_content.push_back(l);
-    m_lines++;
+    for (std::size_t i{0}; i < l; i++) for (int add : line) m_content.push_back(add);
+    m_lines += l;
 
 }
 
-void Matrix::AddLines(std::size_t s) { AddLines({}, s); }
+void Matrix::AddLines(std::size_t n) { AddLines({}, n); }
 
-void Matrix::AddColumns(std::vector<int> column, std::size_t s) {
+void Matrix::AddColumns(std::vector<int> column, std::size_t c) {
 
     if (column == std::vector<int>{}) column = std::vector<int>(m_lines, 0);
     if (column.size() != m_lines && !Empty()) throw std::runtime_error{"Error : Size of added column does not equals number of lines"};
 
-    for (std::size_t i{0}; i < s; i++) for (std::size_t add{0}; add < m_lines; add++) m_content.insert(m_content.cbegin()+add*m_lines+m_columns, column[add]);
-    m_columns++;
+    for (std::size_t i{0}; i < c; i++) for (std::size_t add{0}; add < m_lines; add++) m_content.insert(m_content.cbegin()+add*m_lines+m_columns, column[add]);
+    m_columns += c;
 
 }
 
-void Matrix::AddColumns(std::size_t s) { AddColumns({}, s); }
+void Matrix::AddColumns(std::size_t c) { AddColumns({}, c); }
 
-void Matrix::RemoveLines(std::size_t s) {
+void Matrix::RemoveLines(std::size_t l) {
 
     if (m_lines == 0) throw std::runtime_error{"Error : Can't remove, beacause matrix is empty"};
-    if (s >= m_lines) throw std::runtime_error{"Error : Can't remove over size"};
+    if (l >= m_lines) throw std::runtime_error{"Error : Can't remove over size"};
 
-    for (std::size_t i{0}; i < s; i++) for (std::size_t remove{0}; remove < m_columns; remove++) m_content.pop_back();
-    m_lines--;
+    for (std::size_t i{0}; i < l; i++) for (std::size_t remove{0}; remove < m_columns; remove++) m_content.pop_back();
+    m_lines -= l;
 
 }
 
-void Matrix::RemoveColumns(std::size_t s) {
+void Matrix::RemoveColumns(std::size_t c) {
 
     if (m_columns == 0) throw std::runtime_error{"Error : Can't remove, beacause matrix is empty"};
-    if (s >= m_columns) throw std::runtime_error{"Error : Can't remove over size"};
+    if (c >= m_columns) throw std::runtime_error{"Error : Can't remove over size"};
 
-    for (std::size_t i{0}; i < s; i++) for (std::size_t remove{0}; remove < m_lines; remove++) m_content.erase(m_content.cbegin()+remove*m_columns-1);
-    m_columns--;
+    for (std::size_t i{0}; i < c; i++) for (std::size_t remove{0}; remove < m_lines; remove++) m_content.erase(m_content.cbegin()+remove*m_columns-1);
+    m_columns -= c;
 
 }
 
@@ -235,4 +254,18 @@ int& Matrix::operator()(std::size_t x, std::size_t y) {
     if (x > m_lines || y > m_columns) throw std::runtime_error{"Error : index is too much big"};
     return m_content[x*m_columns+y];
     
+}
+
+Matrix pow(Matrix m, std::size_t p) {
+
+    if (!Matrix_Type::Square::Is(m)) throw std::runtime_error{"Error : Can't calcul power of matrix not square"};
+
+    if (p == 0) return Matrix_Type::Unit::Make(m.m_lines);
+    if (p == 1) return m;
+
+    Matrix t{m};
+    for (std::size_t i{1}; i < p; i++) m *= t;
+
+    return m;
+
 }

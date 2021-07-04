@@ -13,6 +13,8 @@ class Matrix {
     Matrix(Matrix&&) noexcept = default;
 
     Matrix(std::size_t, std::size_t, int = 0) noexcept;
+    Matrix(std::size_t, std::size_t, const std::vector<int>&);
+    Matrix(std::size_t, std::size_t, const std::vector<std::vector<int>>&);
 
     ~Matrix() = default;
 
@@ -60,6 +62,8 @@ class Matrix {
 
     Matrix& operator=(const Matrix&) = default;
     Matrix& operator=(Matrix&&) noexcept = default;
+
+    friend Matrix pow(Matrix, std::size_t) noexcept;
 
     private:
 

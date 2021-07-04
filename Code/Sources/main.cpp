@@ -1,4 +1,4 @@
-#include "../Headers/MatrixType.hpp"
+#include "../Headers/MatrixTypes.hpp"
 #include "../Headers/Tests.hpp"
 
 #include <iostream>
