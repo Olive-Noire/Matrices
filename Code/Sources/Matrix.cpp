@@ -5,6 +5,8 @@
 #include <iostream>
 #include <numeric>
 
+#include "../Headers/MatrixType.hpp"
+
 Matrix::Matrix(std::size_t x, std::size_t y, int n) noexcept : m_lines{x}, m_columns{y}, m_content(x*y, n) {}
 
 std::size_t Matrix::NumberLines() const noexcept { return m_lines; }
@@ -32,7 +34,7 @@ std::vector<int> Matrix::GetColumn(std::size_t index) const {
 
 }
 
-void Matrix::AddLine(const std::vector<int> &line) {
+void Matrix::AddLines(const std::vector<int> &line) {
 
     if (line.size() != m_columns) throw std::runtime_error{"Error : Size of added line does not equals number of columns"};
 
@@ -41,7 +43,7 @@ void Matrix::AddLine(const std::vector<int> &line) {
 
 }
 
-void Matrix::AddColumn(const std::vector<int> &column) {
+void Matrix::AddColumns(const std::vector<int> &column) {
 
     if (column.size() != m_lines) throw std::runtime_error{"Error : Size of added column does not equals number of lines"};
 
@@ -50,7 +52,7 @@ void Matrix::AddColumn(const std::vector<int> &column) {
 
 }
 
-void Matrix::RemoveLine(std::size_t s) {
+void Matrix::RemoveLines(std::size_t s) {
 
     if (m_lines == 0) throw std::runtime_error{"Error : Can't remove, beacause matrix is empty"};
     if (s >= m_lines) throw std::runtime_error{"Error : Can't remove over size"};
@@ -60,7 +62,7 @@ void Matrix::RemoveLine(std::size_t s) {
 
 }
 
-void Matrix::RemoveColumn(std::size_t s) {
+void Matrix::RemoveColumns(std::size_t s) {
 
     if (m_columns == 0) throw std::runtime_error{"Error : Can't remove, beacause matrix is empty"};
     if (s >= m_columns) throw std::runtime_error{"Error : Can't remove over size"};
@@ -87,97 +89,9 @@ bool Matrix::Empty() const noexcept { return m_content.empty(); }
 void Matrix::Clear() noexcept { m_content.clear(); }
 void Matrix::Reverse() { std::reverse(m_content.begin(), m_content.end()); }
 
-Matrix Matrix::MakeNull(std::size_t s) noexcept { return Matrix::MakeSquare(s, 0); }
-Matrix Matrix::MakeSquare(std::size_t s, int n) noexcept { return Matrix{s, s, n}; }
-
-Matrix Matrix::MakeUnit(std::size_t s) noexcept {
-
-    Matrix m{Matrix::MakeNull(s)};
-    for (std::size_t i{0}; i < s; i++) m(i, i) = 1;
-
-    return m;
-
-}
-
-Matrix Matrix::MakeDiagonal(std::size_t s, int n) noexcept {
-
-    Matrix m{Matrix::MakeSquare(s)};
-    for (std::size_t i{0}; i < s; i++) m(i, i) = n;
-
-    return m;
-
-}
-
-Matrix Matrix::MakeUpTriangular(std::size_t s, int n) noexcept {
-
-    Matrix m{Matrix::MakeDiagonal(s, n)};
-    for (std::size_t x{0}; x < s; x++) {
-
-        for (std::size_t y{0}; y < s; y++) {
-
-            if (y > x) m(x, y) = n;
-
-        }
-
-    }
-
-    return m;
-
-}
-
-Matrix Matrix::MakeLowTriangular(std::size_t s, int n) noexcept {
-
-    Matrix m{Matrix::MakeDiagonal(s, n)};
-    for (std::size_t x{0}; x < s; x++) {
-
-        for (std::size_t y{0}; y < s; y++) {
-
-            if (y < x) m(x, y) = n;
-
-        }
-
-    }
-
-    return m;
-
-}
-
-Matrix Matrix::MakeHollow(std::size_t s, const Matrix &m) noexcept {
-
-    Matrix hollow{Matrix::MakeNull(s)};
-    for (std::size_t x{0}; x < s; x++) {
-
-        for (std::size_t y{0}; y < s; y++) {
-
-            if (x != y && x < m.m_lines && y < m.m_columns) hollow(x, y) = m(x, y);
-
-        }
-
-    }
-
-    return hollow;
-
-}
-
-bool Matrix::IsNull() const noexcept { return *this == Matrix::MakeNull(m_lines); }
-bool Matrix::IsSquare() const noexcept { return m_lines == m_columns; }
-bool Matrix::IsUnit() const noexcept { return *this == Matrix::MakeUnit(m_lines); }
-bool Matrix::IsDiagonal() const noexcept { return Empty() && *this == Matrix::MakeDiagonal(m_lines, (*this)(0, 0)); }
-bool Matrix::IsUpTriangular() const noexcept { return Empty() && *this == Matrix::MakeUpTriangular(m_lines, (*this)(0, 0)); }
-bool Matrix::IsLowTriangular() const noexcept { return Empty() && *this == Matrix::MakeLowTriangular(m_lines, (*this)(0, 0)); }
-
-bool Matrix::IsHollow() const noexcept {
-
-    if (!IsSquare()) return false;
-    for (std::size_t i{0}; i < m_lines; i++) if ((*this)(i, i) != 0) return false;
-
-    return true;
-
-}
-
 Matrix Matrix::operator!() const {
 
-    if (!IsSquare()) throw std::runtime_error{"Error : Can't calcul inverse of matrix not square"};
+    if (!Matrix_Type::Square::Is(*this)) throw std::runtime_error{"Error : Can't calcul inverse of matrix not square"};
 
     Matrix inverse{*this};
     if (m_lines == 2) {
@@ -191,7 +105,7 @@ Matrix Matrix::operator!() const {
 
     } else throw std::domain_error{"Error : Inverse of square matrix different of 2 is not implemented"};
     
-    if (*this*inverse != Matrix::MakeUnit(m_lines)) throw std::runtime_error{"Error : Inverse of this matrix does not exist (with integer)"};
+    if (*this*inverse != Matrix_Type::Unit::Make(m_lines)) throw std::runtime_error{"Error : Inverse of this matrix does not exist (with integer)"};
     return inverse;
 
 }

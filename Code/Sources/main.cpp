@@ -1,9 +1,12 @@
-#include "../Headers/Matrix.hpp"
+#include "../Headers/MatrixType.hpp"
 #include "../Headers/Tests.hpp"
 
 #include <iostream>
+#include <ctime>
 
 int main() {
+
+    srand(time(0));
 
     #ifdef DEBUG
 
@@ -16,6 +19,8 @@ int main() {
     std::cout << "Tests effectues !\n";
 
     #endif // DEBUG
+
+    std::cout << Matrix_Type::Random::Make(15, 15, 9, 99);
 
     std::cin.get();
 
