@@ -293,10 +293,10 @@ Matrix pow(Matrix m, std::size_t p) {
 
 int ScalarProduct(const std::vector<int> &l, const std::vector<int> &r) {
 
-    if (line.size() == column.size()) {
+    if (l.size() == r.size()) {
 
         int result{0};
-        for (std::size_t i{0}; i < line.size(); i++) result += line[i]*column[i];
+        for (std::size_t i{0}; i < l.size(); i++) result += l[i]*r[i];
 
         return result;
 

@@ -1,12 +1,7 @@
 #include "../Headers/MatrixTypes.hpp"
 #include "../Headers/Tests.hpp"
 
-#include <iostream>
-#include <ctime>
-
 int main() {
-
-    srand(time(0));
 
     #ifdef DEBUG
 
