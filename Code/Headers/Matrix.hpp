@@ -63,7 +63,7 @@ class Matrix {
     Matrix& operator=(const Matrix&) = default;
     Matrix& operator=(Matrix&&) noexcept = default;
 
-    friend Matrix pow(Matrix, std::size_t) noexcept;
+    friend Matrix pow(Matrix, std::size_t);
 
     private:
 

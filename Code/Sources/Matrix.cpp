@@ -9,13 +9,13 @@
 
 Matrix::Matrix(std::size_t x, std::size_t y, int n) noexcept : m_lines{x}, m_columns{y}, m_content(x*y, n) {}
 
-Matrix::Matrix(std::size_t x, std::size_t y, const std::vector<int> &c) : m_lines{x}, m_columns{y}, m_content{c} {
+Matrix::Matrix(std::size_t x, std::size_t y, const std::vector<int> &c) : m_lines{x}, m_columns{y}, m_content{} {
 
-    if (c.size() != x*y) throw std::runtime_error{"Error : Vector size is different of dimensions"};
+    if (c.size() != x*y) throw std::runtime_error{"Error : Vector size is different of dimensions (horizontal)"};
 
 }
 
-Matrix::Matrix(std::size_t x, std::size_t y, const std::vector<std::vector<int>> &c) : m_lines{x}, m_columns{y} {
+Matrix::Matrix(std::size_t x, std::size_t y, const std::vector<std::vector<int>> &c) : m_lines{x}, m_columns{y}, m_content{} {
 
     if (c.size() != x) throw std::runtime_error{"Error : Vector size is different of dimensions (horizontal)"};
 
