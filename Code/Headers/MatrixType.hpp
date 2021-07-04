@@ -1,7 +1,7 @@
 #ifndef DEF_MATRIX_TYPE_HPP
 #define DEF_MATRIX_TYPE_HPP
 
-#include <limits>
+#include <cstdlib>
 
 #include "./Matrix.hpp"
 
@@ -25,7 +25,7 @@ namespace Matrix_Type {
 
     namespace Full {
 
-        Matrix Make(std::size_t, std::size_t, int = 1);
+        Matrix Make(std::size_t, std::size_t, int = 1) noexcept;
         bool Is(const Matrix&) noexcept;
         void To(Matrix&) noexcept;
 
@@ -73,7 +73,15 @@ namespace Matrix_Type {
 
     namespace Hollow {
 
-        Matrix Make(std::size_t, const Matrix&) noexcept;
+        Matrix Make(std::size_t, int = -(RAND_MAX/2), int = RAND_MAX/2);
+        bool Is(const Matrix&) noexcept;
+        void To(Matrix&) noexcept;
+
+    }
+
+    namespace Symetric {
+
+        Matrix Make(std::size_t, int = -(RAND_MAX/2), int = RAND_MAX/2);
         bool Is(const Matrix&) noexcept;
         void To(Matrix&) noexcept;
 
@@ -81,15 +89,15 @@ namespace Matrix_Type {
 
     namespace Sparse {
 
-        Matrix Make(std::size_t) noexcept;
+        Matrix Make(std::size_t, std::size_t, int = -(RAND_MAX/2), int = RAND_MAX/2);
         bool Is(const Matrix&) noexcept;
-        void To(Matrix&) noexcept;
+        void To(Matrix&);
 
     }
 
     namespace Random {
 
-        Matrix Make(std::size_t, std::size_t, int = std::numeric_limits<int>::min(), int = std::numeric_limits<int>::max());
+        Matrix Make(std::size_t, std::size_t, int = -RAND_MAX/2, int = RAND_MAX/2);
         bool Is(const Matrix&) noexcept;
         void To(Matrix&) noexcept;
 

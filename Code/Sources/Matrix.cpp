@@ -34,23 +34,29 @@ std::vector<int> Matrix::GetColumn(std::size_t index) const {
 
 }
 
-void Matrix::AddLines(const std::vector<int> &line) {
+void Matrix::AddLines(std::vector<int> line, std::size_t s) {
 
-    if (line.size() != m_columns) throw std::runtime_error{"Error : Size of added line does not equals number of columns"};
+    if (line == std::vector<int>{}) line = std::vector<int>(m_columns, 0);
+    if (line.size() != m_columns && !Empty()) throw std::runtime_error{"Error : Size of added line does not equals number of columns"};
 
-    for (int i : line) m_content.push_back(i);
+    for (std::size_t i{0}; i < s; i++) for (int l : line) m_content.push_back(l);
     m_lines++;
 
 }
 
-void Matrix::AddColumns(const std::vector<int> &column) {
+void Matrix::AddLines(std::size_t s) { AddLines({}, s); }
 
-    if (column.size() != m_lines) throw std::runtime_error{"Error : Size of added column does not equals number of lines"};
+void Matrix::AddColumns(std::vector<int> column, std::size_t s) {
 
-    for (std::size_t i{0}; i < m_lines; i++) m_content.insert(m_content.cbegin()+i*m_lines+m_columns, column[i]);
+    if (column == std::vector<int>{}) column = std::vector<int>(m_lines, 0);
+    if (column.size() != m_lines && !Empty()) throw std::runtime_error{"Error : Size of added column does not equals number of lines"};
+
+    for (std::size_t i{0}; i < s; i++) for (std::size_t add{0}; add < m_lines; add++) m_content.insert(m_content.cbegin()+add*m_lines+m_columns, column[add]);
     m_columns++;
 
 }
+
+void Matrix::AddColumns(std::size_t s) { AddColumns({}, s); }
 
 void Matrix::RemoveLines(std::size_t s) {
 

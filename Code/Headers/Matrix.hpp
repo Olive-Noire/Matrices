@@ -22,8 +22,10 @@ class Matrix {
     std::vector<int> GetLine(std::size_t) const;
     std::vector<int> GetColumn(std::size_t) const;
 
-    void AddLines(const std::vector<int>&);
-    void AddColumns(const std::vector<int>&);
+    void AddLines(std::vector<int> = {}, std::size_t = 1);
+    void AddLines(std::size_t);
+    void AddColumns(std::vector<int> = {}, std::size_t = 1);
+    void AddColumns(std::size_t);
 
     void RemoveLines(std::size_t = 1);
     void RemoveColumns(std::size_t = 1);
@@ -33,10 +35,6 @@ class Matrix {
     bool Empty() const noexcept;
     void Clear() noexcept;
     void Reverse();
-
-    static Matrix MakeUpTriangular(std::size_t, int = 1) noexcept;
-    static Matrix MakeLowTriangular(std::size_t, int = 1) noexcept;
-    static Matrix MakeHollow(std::size_t, const Matrix&) noexcept;
 
     Matrix operator!() const;
 

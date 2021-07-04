@@ -1,6 +1,7 @@
 #include "../Headers/MatrixType.hpp"
 
-#include <cstdlib>
+#include <iostream>
+#include <unordered_map>
 
 Matrix Matrix_Type::Empty::Make() noexcept { return Matrix{0, 0, 0}; }
 bool Matrix_Type::Empty::Is(const Matrix &m) noexcept { return m.NumberLines() == 0 && m.NumberColumns() == 0; }
@@ -23,11 +24,11 @@ void Matrix_Type::Square::To(Matrix &m) noexcept {
 
         if (m.NumberLines() > m.NumberColumns()) {
 
-            m.RemoveLines(m.NumberLines()-m.NumberColumns());
+            m.AddLines(m.NumberLines()-m.NumberColumns());
 
         } else {
 
-            m.RemoveColumns(m.NumberColumns()-m.NumberLines());
+            m.AddColumns(m.NumberColumns()-m.NumberLines());
 
         }
 
@@ -82,11 +83,12 @@ Matrix Matrix_Type::UpTriangular::Make(std::size_t s, int n) noexcept {
 
 }
 
-bool Matrix_Type::UpTriangular::Is(const Matrix &m) noexcept { return m.Empty() || m == Matrix::MakeUpTriangular(m.NumberLines(), m(0, 0)); }
+bool Matrix_Type::UpTriangular::Is(const Matrix &m) noexcept { return m.Empty() || m == Matrix_Type::UpTriangular::Make(m.NumberLines(), m(0, 0)); }
 
 void Matrix_Type::UpTriangular::To(Matrix &m) noexcept {
 
-
+    Matrix_Type::Square::To(m);
+    m = Matrix_Type::UpTriangular::Make(m.NumberLines(), m(0, 0));
 
 }
 
@@ -107,28 +109,29 @@ Matrix Matrix_Type::LowTriangular::Make(std::size_t s, int n) noexcept {
 
 }
 
-bool Matrix_Type::LowTriangular::Is(const Matrix &m) noexcept { return m.Empty() || m == Matrix::MakeLowTriangular(m.NumberLines(), m(0, 0)); }
+bool Matrix_Type::LowTriangular::Is(const Matrix &m) noexcept { return m.Empty() || m == Matrix_Type::LowTriangular::Make(m.NumberLines(), m(0, 0)); }
 
 void Matrix_Type::LowTriangular::To(Matrix &m) noexcept {
 
-    
+    Matrix_Type::Square::To(m);
+    m = Matrix_Type::LowTriangular::Make(m.NumberLines(), m(0, 0));
 
 }
 
-Matrix Matrix_Type::Hollow::Make(std::size_t s, const Matrix &m) noexcept {
+Matrix Matrix_Type::Hollow::Make(std::size_t s, int min, int max) {
 
-    Matrix hollow{Matrix_Type::Null::Make(s, s)};
+    Matrix m{Matrix_Type::Square::Make(s, 0)};
     for (std::size_t x{0}; x < s; x++) {
 
         for (std::size_t y{0}; y < s; y++) {
 
-            if (x != y && x < m.NumberLines() && y < m.NumberColumns()) hollow(x, y) = m(x, y);
+            if (x != y && x < m.NumberLines() && y < m.NumberColumns()) m(x, y) = (min-1)+rand()%(max-min+1)+1;
 
         }
 
     }
 
-    return hollow;
+    return m;
 
 }
 
@@ -143,25 +146,103 @@ bool Matrix_Type::Hollow::Is(const Matrix &m) noexcept {
 
 void Matrix_Type::Hollow::To(Matrix &m) noexcept {
 
-
-
-}
-
-Matrix Matrix_Type::Sparse::Make(std::size_t) noexcept {
-
-
+    Matrix_Type::Square::To(m);
+    for (std::size_t i{1}; i < m.NumberLines(); i++) m(i, i) = m(0, 0);
 
 }
 
-bool Matrix_Type::Sparse::Is(const Matrix&) noexcept {
+Matrix Matrix_Type::Symetric::Make(std::size_t s, int min, int max) {
 
+    Matrix m{Matrix_Type::Random::Make(s, s, min, max)};
+    for (std::size_t x{0}; x < s; x++) {
 
+        for (std::size_t y{0}; y < s; y++) {
+
+            if (y > x) m(x, y) = m.Transpose()(x, y);
+
+        }
+
+    }
+
+    return m;
 
 }
 
-void Matrix_Type::Sparse::To(Matrix&) noexcept {
+bool Matrix_Type::Symetric::Is(const Matrix &m) noexcept {
 
-    
+    if (!Matrix_Type::Square::Is(m)) return false;
+    if (Matrix_Type::Diagonal::Is(m) || Matrix_Type::Empty::Is(m)) return true;
+
+    return m == m.Transpose();
+
+}
+
+void Matrix_Type::Symetric::To(Matrix &m) noexcept {
+
+    Matrix_Type::Square::To(m);
+
+    for (std::size_t x{0}; x < m.NumberLines(); x++) {
+
+        for (std::size_t y{0}; y < m.NumberColumns(); y++) {
+
+            if (y > x) m(x, y) = m.Transpose()(x, y);
+
+        }
+
+    }
+
+}
+
+Matrix Matrix_Type::Sparse::Make(std::size_t x, std::size_t y, int min, int max) {
+
+    Matrix m{Matrix_Type::Null::Make(x, y)};
+    for (std::size_t i{0}; i < x; i++) {
+
+        for (std::size_t j{0}; j < y; j++) {
+
+            if (Matrix_Type::Sparse::Is(m) && rand()%2) m(i, j) = (min-1)+rand()%(max-min+1)+1;
+
+        }
+
+    }
+
+    return m;
+
+}
+
+bool Matrix_Type::Sparse::Is(const Matrix &m) noexcept {
+
+    if (Matrix_Type::Null::Is(m)) return true;
+
+    std::unordered_map<int, std::size_t> count;
+    for (std::size_t x{0}; x < m.NumberLines(); x++) {
+
+        for (std::size_t y{0}; y < m.NumberColumns(); y++) count[m(x, y)]++;
+
+    }
+
+    std::unordered_map<int, std::size_t>::iterator verify{count.begin()};
+
+    std::size_t sums{0};
+    while (verify != count.end()) {
+
+        if ((*verify).first != 0) sums += (*verify).second;
+        verify++;
+
+    }
+
+    return sums < count[0];
+
+}
+
+void Matrix_Type::Sparse::To(Matrix &m) {
+
+    while (!Matrix_Type::Sparse::Is(m)) {
+
+        std::size_t x{rand()%m.NumberLines()}, y{rand()%m.NumberColumns()};
+        if (m(x, y) != 0) m(x, y) = 0;
+
+    }
 
 }
 
@@ -170,7 +251,7 @@ Matrix Matrix_Type::Random::Make(std::size_t x, std::size_t y, int min, int max)
     Matrix m{x, y};
     for (std::size_t i{0}; i < x; i++) {
 
-        for (std::size_t j{0}; j < y; j++) m(i, j) = (min-1)+rand()%(max-min)+2;
+        for (std::size_t j{0}; j < y; j++) m(i, j) = (min-1)+rand()%(max-min+1)+1;
 
     }
 

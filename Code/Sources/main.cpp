@@ -20,8 +20,6 @@ int main() {
 
     #endif // DEBUG
 
-    std::cout << Matrix_Type::Random::Make(15, 15, 9, 99);
-
     std::cin.get();
 
     return 0;
